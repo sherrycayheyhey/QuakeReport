@@ -14,7 +14,7 @@ public class Earthquake {
     private long mTimeInMilliseconds;
 
     // magnitude of the earthquake
-    private String mMagnitude;
+    private double mMagnitude;
 
     /**
      * Create a new {@link Earthquake} object.
@@ -24,7 +24,7 @@ public class Earthquake {
      *    *  earthquake happened
      * @param magnitude is the magnitude of the earthquake
      * */
-    public Earthquake(String location, long timeInMilliseconds, String magnitude)
+    public Earthquake(String location, long timeInMilliseconds, double magnitude)
     {
         mLocationName = location;
         mTimeInMilliseconds = timeInMilliseconds;
@@ -48,7 +48,7 @@ public class Earthquake {
     /**
      * Get the magnitude
      */
-    public String getMagnitude() {
+    public double getMagnitude() {
         return mMagnitude;
     }
 }

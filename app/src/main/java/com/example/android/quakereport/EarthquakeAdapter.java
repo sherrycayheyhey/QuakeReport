@@ -1,12 +1,16 @@
 package com.example.android.quakereport;
 
 import android.content.Context;
+import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import androidx.core.content.ContextCompat;
+
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -69,13 +73,31 @@ public class EarthquakeAdapter extends ArrayAdapter<Earthquake> {
         // Get the {@link Earthquake} object located at this position in the list
         Earthquake currentEarthquake = getItem(position);
 
+        /*
+                Magnitude
+         */
+
         // Find the TextView in the list_item.xml layout with the ID magnitude
         TextView magTextView = listItemView.findViewById(R.id.magnitude);
-        // Get the magnitude from the current Earthquake object and
-        // set this text on the mag TextView
-        magTextView.setText(currentEarthquake.getMagnitude());
+        // Get the magnitude from the current Earthquake object, format it with the helper function,
+        //  then set it to the TextView
+        String formattedMag = formatMagnitude(currentEarthquake.getMagnitude());
+        // Display the magnitude of the current earthquake in that TextView
+        magTextView.setText(formattedMag);
 
+        // Set the proper background color on the magnitude circle.
+        // Fetch the background from the TextView, which is a GradientDrawable.
+        GradientDrawable magCircle = (GradientDrawable) magTextView.getBackground();
 
+        // Get the appropriate background color based on the current earthquake magnitude
+        int magColor = getMagnitudeColor(currentEarthquake.getMagnitude());
+
+        // Set the color on the magnitude circle
+        magCircle.setColor(magColor);
+
+        /*
+                Location
+         */
 
         //get the location String from the Earthquake then send it to the splitLocation() helper method to be split
         String locationString = currentEarthquake.getLocation();
@@ -89,11 +111,9 @@ public class EarthquakeAdapter extends ArrayAdapter<Earthquake> {
         locationOffsetTextView.setText(locationOffset);
         primaryLocationTextView.setText(primaryLocation);
 
-
-
-
-
-
+        /*
+                Date
+         */
 
         // Create a new Date object from the time in milliseconds of the earthquake
         Date dateObject = new Date(currentEarthquake.getTimeInMilliseconds());
@@ -116,6 +136,8 @@ public class EarthquakeAdapter extends ArrayAdapter<Earthquake> {
         // so that it can be shown in the ListView
         return listItemView;
     }
+
+
 
     /**
      * Return the formatted date string (i.e. "Mar 3, 1984") from a Date object.
@@ -145,6 +167,56 @@ public class EarthquakeAdapter extends ArrayAdapter<Earthquake> {
             locationOffset = getContext().getString(R.string.near_the);
             primaryLocation = location;
         }
+    }
+
+    /**
+     * Return the formatted magnitude string showing 1 decimal place (i.e. "3.2")
+     * from a decimal magnitude value.
+     */
+    private String formatMagnitude(double magnitude) {
+        DecimalFormat magnitudeFormat = new DecimalFormat("0.0");
+        return magnitudeFormat.format(magnitude);
+    }
+
+    private int getMagnitudeColor(double magnitude) {
+        //holds the int of the color resource ID
+        int magColorResourceId;
+        int roundedMag = (int) Math.floor(magnitude);
+        switch (roundedMag) {
+            case 0:
+            case 1:
+                magColorResourceId = R.color.magnitude1;
+                break;
+            case 2:
+                magColorResourceId = R.color.magnitude2;
+                break;
+            case 3:
+                magColorResourceId = R.color.magnitude3;
+                break;
+            case 4:
+                magColorResourceId = R.color.magnitude4;
+                break;
+            case 5:
+                magColorResourceId = R.color.magnitude5;
+                break;
+            case 6:
+                magColorResourceId = R.color.magnitude6;
+                break;
+            case 7:
+                magColorResourceId = R.color.magnitude7;
+                break;
+            case 8:
+                magColorResourceId = R.color.magnitude8;
+                break;
+            case 9:
+                magColorResourceId = R.color.magnitude9;
+                break;
+            default:
+                magColorResourceId = R.color.magnitude10plus;
+                break;
+        }
+        //convert the color resource ID to the actual color value
+        return ContextCompat.getColor(getContext(), magColorResourceId);
     }
 }
 
