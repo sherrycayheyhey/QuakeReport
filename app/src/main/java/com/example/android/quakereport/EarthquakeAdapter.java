@@ -142,7 +142,7 @@ public class EarthquakeAdapter extends ArrayAdapter<Earthquake> {
             locationOffset = location.substring(0, split + 3);
             primaryLocation = location.substring(split + LOCATION_SEPARATOR.length());
         } else {
-            locationOffset = "Near the ";
+            locationOffset = getContext().getString(R.string.near_the);
             primaryLocation = location;
         }
     }
