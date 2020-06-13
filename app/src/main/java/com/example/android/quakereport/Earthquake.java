@@ -2,13 +2,13 @@ package com.example.android.quakereport;
 
 /**
  * {@link Earthquake} represents a single earthquake.
- * Each object has 3 properties: city name, date, and magnitude.
+ * Each object has 3 properties: location name, date, and magnitude.
  */
 
 public class Earthquake {
 
     // city of the earthquake
-    private String mCityName;
+    private String mLocationName;
 
     // date of the earthquake
     private long mTimeInMilliseconds;
@@ -19,23 +19,23 @@ public class Earthquake {
     /**
      * Create a new {@link Earthquake} object.
      *
-     * @param city is the name of the city the earthquake happened in
+     * @param location is the name of the location the earthquake happened in
      * @param timeInMilliseconds is the time in milliseconds (from the Epoch) when the
      *    *  earthquake happened
      * @param magnitude is the magnitude of the earthquake
      * */
-    public Earthquake(String city, long timeInMilliseconds, String magnitude)
+    public Earthquake(String location, long timeInMilliseconds, String magnitude)
     {
-        mCityName = city;
+        mLocationName = location;
         mTimeInMilliseconds = timeInMilliseconds;
         mMagnitude = magnitude;
     }
 
     /**
-     * Get the name of the city
+     * Get the name of the location
      */
-    public String getCityName() {
-        return mCityName;
+    public String getLocation() {
+        return mLocationName;
     }
 
     /**

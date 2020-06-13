@@ -24,6 +24,14 @@ import java.util.List;
 
 public class EarthquakeAdapter extends ArrayAdapter<Earthquake> {
 
+    //variables for the location string split
+    String locationOffset;
+    String primaryLocation;
+
+    // constant for splitting the location string
+    private static final String LOCATION_SEPARATOR = " of ";
+
+
     /**
      * This is our own custom constructor (it doesn't mirror a superclass constructor).
      * The context is used to inflate the layout file, and the list is the data we want
@@ -67,11 +75,25 @@ public class EarthquakeAdapter extends ArrayAdapter<Earthquake> {
         // set this text on the mag TextView
         magTextView.setText(currentEarthquake.getMagnitude());
 
-        // Find the TextView in the list_item.xml layout with the ID city
-        TextView cityTextView = listItemView.findViewById(R.id.city);
-        // Get the city from the current Earthquake object and
-        // set this text on the city TextView
-        cityTextView.setText(currentEarthquake.getCityName());
+
+
+        //get the location String from the Earthquake then send it to the splitLocation() helper method to be split
+        String locationString = currentEarthquake.getLocation();
+        splitLocation(locationString);
+
+        // Find the TextView in the list_item.xml layout with the IDs primary_location and location_offset
+        TextView primaryLocationTextView = listItemView.findViewById(R.id.primary_location);
+        TextView locationOffsetTextView = listItemView.findViewById(R.id.location_offset);
+
+        // set the text on the primary_location and location_offset TextViews
+        locationOffsetTextView.setText(locationOffset);
+        primaryLocationTextView.setText(primaryLocation);
+
+
+
+
+
+
 
         // Create a new Date object from the time in milliseconds of the earthquake
         Date dateObject = new Date(currentEarthquake.getTimeInMilliseconds());
@@ -111,5 +133,18 @@ public class EarthquakeAdapter extends ArrayAdapter<Earthquake> {
         return timeFormat.format(dateObject);
     }
 
+    /**
+     * Return the split location string  from a location String
+     */
+    private void splitLocation(String location) {
+        if(location.contains(LOCATION_SEPARATOR)) {
+            int split = location.indexOf(LOCATION_SEPARATOR);
+            locationOffset = location.substring(0, split + 3);
+            primaryLocation = location.substring(split + LOCATION_SEPARATOR.length());
+        } else {
+            locationOffset = "Near the ";
+            primaryLocation = location;
+        }
+    }
 }
 
