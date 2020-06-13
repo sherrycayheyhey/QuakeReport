@@ -53,7 +53,7 @@ public class EarthquakeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.earthquake_activity);
 
-        // Create an ArrayList of Earthquake objects and add some Earthquake objects to it
+        /*// Create an ArrayList of Earthquake objects and add some Earthquake objects to it
         ArrayList<Earthquake> earthquakes = new ArrayList<>();
         earthquakes.add(new Earthquake("San Francisco", "Feb 2, 2016", "7.2"));
         earthquakes.add(new Earthquake("London", "July 20, 2015", "6.1"));
@@ -61,7 +61,11 @@ public class EarthquakeActivity extends AppCompatActivity {
         earthquakes.add(new Earthquake("Mexico City", "May 3, 2014", "5.4"));
         earthquakes.add(new Earthquake("Moscow", "Jan 31, 2013", "2.8"));
         earthquakes.add(new Earthquake("Rio De Janeiro", "Aug 19, 2012", "4.9"));
-        earthquakes.add(new Earthquake("Paris", "Oct 30, 2011", "1.6"));
+        earthquakes.add(new Earthquake("Paris", "Oct 30, 2011", "1.6"));*/
+
+        //call QueryUtils.extractEarthquakes() to get a list of Earthquake objects created from the JSON response
+        //this is done in place of creating all the earthquake objects manually, as done before
+        ArrayList<Earthquake> earthquakes = QueryUtils.extractEarthquakes();
 
         // Create an {@link EarthquakeAdapter}, whose data source is a list of
         // {@link Earthquake}s. The adapter knows how to create list item views for each item
