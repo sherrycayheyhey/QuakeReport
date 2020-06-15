@@ -2,7 +2,7 @@ package com.example.android.quakereport;
 
 /**
  * {@link Earthquake} represents a single earthquake.
- * Each object has 3 properties: location name, date, and magnitude.
+ * Each object has 4 properties: location name, date, magnitude, and url.
  */
 
 public class Earthquake {
@@ -16,6 +16,9 @@ public class Earthquake {
     // magnitude of the earthquake
     private double mMagnitude;
 
+    //url of the earthquake
+    private String mUrl;
+
     /**
      * Create a new {@link Earthquake} object.
      *
@@ -23,12 +26,14 @@ public class Earthquake {
      * @param timeInMilliseconds is the time in milliseconds (from the Epoch) when the
      *    *  earthquake happened
      * @param magnitude is the magnitude of the earthquake
+     * @param url is the USGS webpage for the earthquake
      * */
-    public Earthquake(String location, long timeInMilliseconds, double magnitude)
+    public Earthquake(String location, long timeInMilliseconds, double magnitude, String url)
     {
         mLocationName = location;
         mTimeInMilliseconds = timeInMilliseconds;
         mMagnitude = magnitude;
+        mUrl = url;
     }
 
     /**
@@ -50,5 +55,12 @@ public class Earthquake {
      */
     public double getMagnitude() {
         return mMagnitude;
+    }
+
+    /**
+     * Get the url
+     */
+    public String getUrl() {
+        return mUrl;
     }
 }

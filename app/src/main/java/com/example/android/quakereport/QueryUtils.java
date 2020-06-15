@@ -75,13 +75,14 @@ public final class QueryUtils {
                 //get the "properties" JSONObject
                 JSONObject properties = currentEarthquake.getJSONObject("properties");
 
-                //extract mag, place, and time
+                //extract mag, place, time, and url
                 double mag = properties.getDouble("mag");
                 String place = properties.optString("place").toString();
                 long time = properties.getLong("time");
+                String url = properties.getString("url");
 
                 // create a new Earthquake object from the extracted values
-                Earthquake newEarthquake = new Earthquake(place, time, mag);
+                Earthquake newEarthquake = new Earthquake(place, time, mag, url);
 
                 //add the Earthquake object to the list of Earthquakes
                 earthquakes.add(newEarthquake);
