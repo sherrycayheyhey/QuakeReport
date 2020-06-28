@@ -220,21 +220,4 @@ public class EarthquakeAdapter extends ArrayAdapter<Earthquake> {
     }
 }
 
-/*  In this app we want to use the inner class declaration:
-    private class EarthquakeAsyncTask extends AsyncTask<String, Void, List<Earthquake>{}
-    because an AsyncTask should be used when getting data from the server so it isn't on the UI thread
 
-    the generics used are:
-        --String for the string of the URL that is sent to the task
-        --Void because we aren't going to update the user on the progress
-        --List<Earthquake> because we want a list of Earthquake objects back as the result of this background task
-
-    In this case, List<Earthquake> is used instead of ArrayList<Earthquake> because we want to be flexible. It's best
-    to use List whenever you need a list object (ArrayList or LinkedList) so the code is flexible and you can swap
-    them out if needed. List is an interface and ArrayList is a concrete class so you CANNOT create an object instance
-    of List because, as an interface, its methods aren't implemented. What you CAN do is create an object instance
-    of ArrayList and specify a generic parameter for E, because it's a concrete class. For example:
-        List<Earthquake> earthquakeList = new ArrayList<Earthquake>();
-        List<Earthquake> earthquakeList = new LinkedList<Earthquake>();
-
- */

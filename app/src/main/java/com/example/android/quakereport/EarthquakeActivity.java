@@ -17,6 +17,7 @@ package com.example.android.quakereport;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -24,6 +25,7 @@ import android.widget.ListView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /* How to make make a list with custom shit
  *1. create an xml for what each item on the list will look like which includes:
@@ -52,34 +54,26 @@ import java.util.ArrayList;
 
 public class EarthquakeActivity extends AppCompatActivity {
 
+    /** URL for earthquake data from the USGS dataset */
+    private static final String USGS_REQUEST_URL =
+            "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&orderby=time&minmag=6&limit=10";
+
+    // global variable in order to access and modify the instance of the EarthquakeAdapter ListView
+    /** Adapter for the list of earthquakes */
+    private EarthquakeAdapter mAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.earthquake_activity);
 
-        /*// Create an ArrayList of Earthquake objects and add some Earthquake objects to it
-        ArrayList<Earthquake> earthquakes = new ArrayList<>();
-        earthquakes.add(new Earthquake("San Francisco", "Feb 2, 2016", "7.2"));
-        earthquakes.add(new Earthquake("London", "July 20, 2015", "6.1"));
-        earthquakes.add(new Earthquake("Tokyo", "Nov 10, 2014", "3.9"));
-        earthquakes.add(new Earthquake("Mexico City", "May 3, 2014", "5.4"));
-        earthquakes.add(new Earthquake("Moscow", "Jan 31, 2013", "2.8"));
-        earthquakes.add(new Earthquake("Rio De Janeiro", "Aug 19, 2012", "4.9"));
-        earthquakes.add(new Earthquake("Paris", "Oct 30, 2011", "1.6"));*/
-
-        //call QueryUtils.extractEarthquakes() to get a list of Earthquake objects created from the JSON response
-        //this is done in place of creating all the earthquake objects manually, as done before
-        ArrayList<Earthquake> earthquakes = QueryUtils.extractEarthquakes();
-
-        // Create an {@link EarthquakeAdapter}, whose data source is a list of
-        // {@link Earthquake}s. The adapter knows how to create list item views for each item
-        // in the list. Set to final so it could be accessed within the OnItemClickListener.
-        final EarthquakeAdapter earthquakeAdapter = new EarthquakeAdapter(this, earthquakes);
-
         // Get a reference to the ListView, and attach the adapter to the listView.
         //this populates the user interface
         ListView listView = findViewById(R.id.list);
-        listView.setAdapter(earthquakeAdapter);
+        //create a new adapter that takes an empty list of earthquakes as input
+        mAdapter = new EarthquakeAdapter(this, new ArrayList<Earthquake>());
+        //set the adapter on the {@link ListView}
+        listView.setAdapter(mAdapter);
 
         // Set an item click listener on the ListView, which sends an intent to a web browser
         // to open a website with more information about the selected earthquake.
@@ -87,7 +81,7 @@ public class EarthquakeActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 // Find the current earthquake that was clicked on
-                Earthquake currentEarthquake = earthquakeAdapter.getItem(position);
+                Earthquake currentEarthquake = mAdapter.getItem(position);
 
                 // Convert the String URL into a URI object (to pass into the Intent constructor)
                 Uri earthquakeUri = Uri.parse(currentEarthquake.getUrl());
@@ -106,5 +100,66 @@ public class EarthquakeActivity extends AppCompatActivity {
                 startActivity(websiteIntent);
             }
         });
+
+        // Start the AsyncTask to fetch the earthquake data
+        EarthquakeAsyncTask task = new EarthquakeAsyncTask();
+        task.execute(USGS_REQUEST_URL);
+    }
+
+    /*  In this app we want to use the inner class declaration:
+    private class EarthquakeAsyncTask extends AsyncTask<String, Void, List<Earthquake>{}
+    because an AsyncTask should be used when getting data from the server so it isn't on the UI thread
+
+    the generics used are:
+        --String for the string of the URL that is sent to the task
+        --Void because we aren't going to update the user on the progress
+        --List<Earthquake> because we want a list of Earthquake objects back as the result of this background task
+
+    In this case, List<Earthquake> is used instead of ArrayList<Earthquake> because we want to be flexible. It's best
+    to use List whenever you need a list object (ArrayList or LinkedList) so the code is flexible and you can swap
+    them out if needed. List is an interface and ArrayList is a concrete class so you CANNOT create an object instance
+    of List because, as an interface, its methods aren't implemented. What you CAN do is create an object instance
+    of ArrayList and specify a generic parameter for E, because it's a concrete class. For example:
+        List<Earthquake> earthquakeList = new ArrayList<Earthquake>();
+        List<Earthquake> earthquakeList = new LinkedList<Earthquake>();
+ */
+
+    //inner class to run the AsyncTask
+    private class EarthquakeAsyncTask extends AsyncTask<String, Void, List<Earthquake>> {
+
+        /**
+         * This method is invoked (or called) on a background thread, so we can perform long-running
+         * operations like making a network request.
+         *
+         * It is NOT okay to update the UI from a background thread, so we just return an {@link List<Earthquake>}
+         * object as the result.
+         */
+
+        @Override
+        protected List<Earthquake> doInBackground(String... urls) { //urls so this works with any String url
+            // Don't perform the request if there are no URLs, or the first URL is null.
+            if(urls.length < 1 || urls[0] == null) {
+                return null;
+            }
+
+            // Perform the HTTP request for earthquake data and process the response.
+            List<Earthquake> result = QueryUtils.fetchEarthquakeData(urls[0]);
+            //return the Event object
+            return result;
+        }
+
+        // when we get here we need to update the ListView and the only way to do that is to update the
+        // data set within the EarthquakeAdapter so in order to access and modify the instance of the
+        // EarthquakeAdapter we need to make it a global variable in the EarthquakeActivity
+        protected void onPostExecute(List<Earthquake> data) {
+            // Clear the adapter of previous earthquake data
+            mAdapter.clear();
+
+            // If there is a valid list of {@link Earthquake}s, then add them to the adapter's
+            // data set. This will trigger the ListView to update.
+            if (data != null && !data.isEmpty()) {
+                mAdapter.addAll(data);
+            }
+        }
     }
 }
