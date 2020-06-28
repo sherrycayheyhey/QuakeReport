@@ -77,6 +77,7 @@ public class EarthquakeActivity extends AppCompatActivity {
         final EarthquakeAdapter earthquakeAdapter = new EarthquakeAdapter(this, earthquakes);
 
         // Get a reference to the ListView, and attach the adapter to the listView.
+        //this populates the user interface
         ListView listView = findViewById(R.id.list);
         listView.setAdapter(earthquakeAdapter);
 
@@ -92,6 +93,13 @@ public class EarthquakeActivity extends AppCompatActivity {
                 Uri earthquakeUri = Uri.parse(currentEarthquake.getUrl());
 
                 // Create a new intent to view the earthquake URI
+                // an implicit intent is the better choice to use here because it will let the user's
+                // defaults (like default web browser) be used to open the link instead of us explicitly
+                // choosing which app should open the URL
+                // to do this, we specify which action we want to perform (viewing something) and then
+                // the URI will be passed and Android will sort out the best app to handle the content
+                // which will probably be a browser in the case but might be mapping app if the URI
+                // represented a location instead
                 Intent websiteIntent = new Intent(Intent.ACTION_VIEW, earthquakeUri);
 
                 // Send the intent to launch a new activity
