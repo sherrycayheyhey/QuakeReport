@@ -124,6 +124,31 @@ public class EarthquakeActivity extends AppCompatActivity {
         List<Earthquake> earthquakeList = new LinkedList<Earthquake>();
  */
 
+    /* AsyncTask has a limitation in that if the device is rotated, a new Activity object AND a new AsyncTask
+        object are created which is a waste because the first AsyncTask object will continue to process for
+        something that will never be used since it wasn't done when the activity was destroyed. Each time the device is rotated this happens so all of a sudden there's
+        a bunch of AsyncTasks running that won't be used and they're all doing pretty much the same thing since
+        the data probably hasn't changed in the time it took to turn the device
+        what should happen is that the original AsyncTask should be used regardless of the device rotating, in othe
+        words, don't create the new AsyncTasks. What do we do with threaded work when the activity that kicked it
+        off is no longer alive? We need a loader!!
+
+        Loaders
+        --only fetch data once, it won't spawn multiple all the AsyncTasks and Activities like AsyncTask would
+        --when an activity shuts down, it tells all of its loader to stop what they're doing because the data won't be used
+        --loaders persist across Activity configuration changes (rotating the device) so if the device
+            is rotated then the loader will return its data to the new activity when it's done
+
+        LoaderManager interacts with an Activity to manage one or more Loader instances.
+        We need to implement the LoaderManager.LoaderCallbacks interface in the EarthquakeActivity so
+        that we're a client that can interact with the LoaderManager.
+        After that, the activity has to override the following methods:
+            --onCreateLoader(): creates and returns a new Loader instance
+            --onLoadFinish(): receives the data once the Loader has finished loading it
+            --onLoaderReset(): handles when the previously created Loader is no longer needed, the existing data can be discarded
+        To start a loader (and trigger the Loader callback methods) when the app is launched, call
+        getLoaderManager().initLoader(0, null, this) in the EarthquakeActivity's onCreate() method, the 0 = the id 
+     */
     //inner class to run the AsyncTask
     private class EarthquakeAsyncTask extends AsyncTask<String, Void, List<Earthquake>> {
 
